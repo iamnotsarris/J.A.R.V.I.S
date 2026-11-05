@@ -2172,7 +2172,7 @@ class PluginManagerOverlay(QWidget):
             lay.addLayout(self._build_row(p))
 
         lay.addSpacing(4)
-        close_btn = QPushButton("CLOSE")
+        close_btn = QPushButton("FECHAR")
         close_btn.setFixedHeight(30)
         close_btn.setFont(QFont("Courier New", 9))
         close_btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -2593,7 +2593,7 @@ class AudioDeviceOverlay(_HudOverlay):
         ok.clicked.connect(self._apply)
         row.addWidget(ok)
 
-        cancel = QPushButton("CLOSE")
+        cancel = QPushButton("FECHAR")
         cancel.setFixedHeight(32)
         cancel.setFont(QFont("Courier New", 9))
         cancel.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -2908,7 +2908,7 @@ class MemoryOverlay(_HudOverlay):
             scroll.setWidget(inner)
             self._lay.addWidget(scroll)
 
-        close = QPushButton("CLOSE")
+        close = QPushButton("FECHAR")
         close.setFixedHeight(30)
         close.setFont(QFont("Courier New", 9))
         close.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -3016,9 +3016,9 @@ class ProvidersOverlay(_HudOverlay):
     # Which provider fills each slot, and what the slot is FOR — in the words
     # somebody configuring it would use, not the words the code uses.
     _SLOTS = (
-        ("stt", "①", "HEARING", "turns what you say into words"),
-        ("llm", "②", "THINKING", "understands, decides, uses your tools"),
-        ("tts", "③", "SPEAKING", "reads the answer out loud"),
+        ("stt", "①", "AUDIÇÃO", "transforma o que você diz em palavras"),
+        ("llm", "②", "RACIOCÍNIO", "entende, decide, usa suas ferramentas"),
+        ("tts", "③", "FALA", "lê a resposta em voz alta"),
     )
 
     def __init__(self, parent=None):
@@ -3168,7 +3168,7 @@ class ProvidersOverlay(_HudOverlay):
         apply_btn.clicked.connect(self._apply)
         row.addWidget(apply_btn, 2)
 
-        close = QPushButton("CLOSE")
+        close = QPushButton("FECHAR")
         close.setFixedHeight(34)
         close.setFont(QFont("Courier New", 9))
         close.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -4265,7 +4265,7 @@ class PluginSettingsOverlay(QWidget):
             save_btn.clicked.connect(self._save_all)
             btn_row.addWidget(save_btn)
 
-        close_btn = QPushButton("CLOSE")
+        close_btn = QPushButton("FECHAR")
         close_btn.setFixedHeight(34)
         close_btn.setFont(QFont("Courier New", 9))
         close_btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -4510,7 +4510,7 @@ class RemoteKeyOverlay(QWidget):
             w.setWordWrap(True)
             return w
 
-        lay.addWidget(_lbl("◈  REMOTE ACCESS", 12, True))
+        lay.addWidget(_lbl("◈  ACESSO REMOTO", 12, True))
         sep = QFrame()
         sep.setFrameShape(QFrame.Shape.HLine)
         sep.setStyleSheet(f"color: {C.BORDER}; margin: 1px 0;")
@@ -4532,7 +4532,11 @@ class RemoteKeyOverlay(QWidget):
         self._update_qr(auto_login_url)
 
         lay.addWidget(
-            _lbl("Scan with phone camera to connect instantly", 8, color=C.TEXT_DIM)
+            _lbl(
+                "Digitalize com a câmera do telefone para conectar instantaneamente",
+                8,
+                color=C.TEXT_DIM,
+            )
         )
 
         # THE ONE FAILURE THAT LOOKS LIKE THE SERVER BEING OFF.
@@ -4579,7 +4583,7 @@ class RemoteKeyOverlay(QWidget):
 
         lay.addWidget(
             _lbl(
-                "Or enter manually:",
+                "Ou digite manualmente:",
                 7,
                 color=C.TEXT_DIM,
                 align=Qt.AlignmentFlag.AlignLeft,
@@ -4616,7 +4620,7 @@ class RemoteKeyOverlay(QWidget):
 
         btn_row = QHBoxLayout()
         btn_row.setSpacing(8)
-        new_btn = QPushButton("NEW KEY")
+        new_btn = QPushButton("NOVA CHAVE")
         new_btn.setFixedHeight(32)
         new_btn.setFont(QFont("Courier New", 8, QFont.Weight.Bold))
         new_btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -4630,7 +4634,7 @@ class RemoteKeyOverlay(QWidget):
         new_btn.clicked.connect(self._refresh_key)
         btn_row.addWidget(new_btn)
 
-        close_btn = QPushButton("DISMISS")
+        close_btn = QPushButton("LIBERAR")
         close_btn.setFixedHeight(32)
         close_btn.setFont(QFont("Courier New", 8, QFont.Weight.Bold))
         close_btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -4697,7 +4701,7 @@ class RemoteKeyOverlay(QWidget):
     def _tick(self):
         remaining = max(0, int(self._expiry - time.time()))
         m, s = divmod(remaining, 60)
-        self._timer_lbl.setText(f"Key expires in  {m:02d}:{s:02d}")
+        self._timer_lbl.setText(f"A chave expira em:  {m:02d}:{s:02d}")
         if remaining == 0:
             self._do_close()
 
