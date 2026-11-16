@@ -770,7 +770,7 @@ class HudCanvas(QWidget):
     # from the same principle: everything on it means something. The rings turn
     # at a rate the state sets, the spectrum ring is the real audio level, and
     # the core brightens with the voice. Nothing here is decoration that moves
-    # for its own sake, which is what made the old glowing orb feel dead.
+    # for its own sake, which is what made the old glowing orb feel dead
 
     def _core_colours(self):
         if self.muted:
