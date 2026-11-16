@@ -104,6 +104,11 @@ try:
 except Exception:  # pragma: no cover — HUD must never die over cosmetics
     HoloAvatar = None
 
+try:
+    from core.interstellar_core import InterstellarCore
+except Exception:  # pragma: no cover
+    InterstellarCore = None
+
 
 def _base_dir() -> Path:
     if getattr(sys, "frozen", False):
@@ -504,6 +509,13 @@ class HudCanvas(QWidget):
             except Exception:
                 self._avatar = None
 
+        self._core = None
+        if InterstellarCore is not None:
+            try:
+                self._core = InterstellarCore()
+            except Exception:
+                self._core = None
+
         # Which centrepiece to draw. Read once here and changed live by the
         # settings toggle; the avatar object is kept either way so switching
         # back is instant and costs no reload.
@@ -701,7 +713,43 @@ class HudCanvas(QWidget):
                 v_seq=v_seq,
                 v_hop=(sched[2] if sched is not None else 0.02),
             )
+        elif self._core is not None:
+            # Núcleo interestelar: ele mesmo mantém o tempo interno e as
+            # partículas, então só repassamos o estado atual.
+            self._core.step(
+                dt,
+                amp,
+                speaking=self.speaking,
+                muted=self.muted,
+                state=self.state,
+            )
         else:
+            # Fallback antigo — mantido apenas se o InterstellarCore não
+            # estiver disponível.
+            if now - self._last_t > (0.12 if self.speaking else 0.5):
+                if self.speaking:
+                    self._base_scale = 1.03
+                    self._base_halo = 122.0
+                elif self.muted:
+                    self._base_scale = random.uniform(0.998, 1.002)
+                    self._base_halo = random.uniform(15, 28)
+                else:
+                    self._base_scale = random.uniform(1.001, 1.008)
+                    self._base_halo = random.uniform(48, 68)
+                self._last_t = now
+
+            if self.muted:
+                self._tgt_scale, self._tgt_halo = self._base_scale, self._base_halo
+            elif self.speaking:
+                self._tgt_scale = self._base_scale + amp * 0.13
+                self._tgt_halo = self._base_halo + amp * 95.0
+            else:
+                self._tgt_scale = self._base_scale + amp * 0.06
+                self._tgt_halo = self._base_halo + amp * 75.0
+
+            sp = 0.38 if self.speaking else (0.30 if amp > 0.02 else 0.15)
+            self._scale += (self._tgt_scale - self._scale) * sp
+            self._halo += (self._tgt_halo - self._halo) * sp
             # Fallback core: slow "breathing" base target, lifted by the level.
             if now - self._last_t > (0.12 if self.speaking else 0.5):
                 if self.speaking:
@@ -1018,7 +1066,25 @@ class HudCanvas(QWidget):
             _band_t = 12.0
             _band_h = max(60.0, _sy_status - 12.0 - _band_t)
             _r = min(W * 0.46, _band_h / 2.0)
-            self._paint_core(p, cx, _band_t + _band_h / 2.0, _r, W, _band_h)
+            _ccx, _ccy = cx, _band_t + _band_h / 2.0
+
+            if self._core is not None:
+                _main, _acc = self._core_colours()
+                self._core.paint(
+                    p, _ccx, _ccy, _r,
+                    _main, _acc, qcol(C.BG),
+                    self._amp_disp,
+                    self.speaking,
+                    self.muted,
+                    self.state,
+                    name=self._assistant_name or "",
+                    W=W,
+                    H=_band_h,
+                )
+            else:
+                # Fallback: núcleo antigo, se o novo módulo não estiver
+                # disponível. Nada do restante do HUD muda.
+                self._paint_core(p, _ccx, _ccy, _r, W, _band_h)
 
         # status text
         sy = _sy_status
